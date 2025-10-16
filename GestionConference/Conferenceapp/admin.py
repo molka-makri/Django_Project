@@ -66,6 +66,13 @@ class ConferenceAdmin(admin.ModelAdmin):
     
     # Pour tester la version tabulaire, remplacez la ligne précédente par :
     # inlines = [SubmissionTabularInline]
+@admin.action(description="Marquer comme payés")
+def mark_as_payes(modeladmin,request,queryset):
+    queryset.update(payed=True)
+
+@admin.action(description="Accepter soumissions.")
+def mark_as_accepted(modeladmin, request, queryset):
+    queryset.update(status='accepted')
 
 # Configuration pour Submission
 @admin.register(Submission)
@@ -87,6 +94,7 @@ class SubmissionAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+    actions = [mark_as_payes, mark_as_accepted]
 
 # Configuration pour Organizing_commiteee
 @admin.register(Organizing_commiteee)
