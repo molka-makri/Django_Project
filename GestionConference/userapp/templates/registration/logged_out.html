@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Déconnexion</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; text-align: center; }
+        .logout-container { max-width: 400px; margin: 0 auto; }
+        .success-message { background-color: #d4edda; color: #155724; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .btn { background-color: #007cba; color: white; padding: 10px 20px; border: none; border-radius: 4px; text-decoration: none; display: inline-block; margin: 5px; }
+        .btn:hover { background-color: #005a87; }
+    </style>
+</head>
+<body>
+    <div class="logout-container">
+        <h2>Déconnexion réussie</h2>
+        <div class="success-message">
+            Vous avez été déconnecté avec succès.
+        </div>
+        <p>
+            <a href="{% url 'userapp:login' %}" class="btn">Se reconnecter</a>
+            <a href="{% url 'conferenceapp:conference_list' %}" class="btn">Voir les conférences</a>
+        </p>
+    </div>
+    
+    <script>
+        // Redirection automatique après 3 secondes
+        setTimeout(function() {
+            window.location.href = "{% url 'userapp:login' %}";
+        }, 3000);
+    </script>
+</body>
+</html>
