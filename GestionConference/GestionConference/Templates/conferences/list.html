@@ -1,12 +1,20 @@
 
+{% extends 'base.html' %}
+
+{% block content %}
 <h2>Liste des conférences</h2>
 <table border="2">
+    ajouter conférence : <a href="{% url 'conferenceapp:conference_add' %}">Ajouter</a>
+
+    <br>
     <tr>
         <td>Nom</td>
         <td>Date de début</td>
         <td>Date de fin</td>
         <td>Lieu</td>
-        <td>Détailss</td>
+        <td>Détails</td>
+        <td>Modifier</td>
+        <td>Supprimer</td>
     </tr>
 {% for c in conferences %}
     <tr>
@@ -14,8 +22,10 @@
         <td>{{ c.start_date }}</td>
         <td>{{ c.end_date }}</td>
         <td>{{ c.location }}</td>
-        <td><a href="{% url 'conference_detail' c.pk %}">Détails</a>
-        </td>
+        <td><a href="{% url 'conferenceapp:conference_detail' c.pk %}">Détails</a></td>
+        <td><a href="{% url 'conferenceapp:conference_edit' c.pk %}">Modifier</a></td>
+        <td><a href="{% url 'conferenceapp:conference_delete' c.pk %}">Supprimer</a></td>
     </tr>
 {% endfor %}
 </table>
+{% endblock %}

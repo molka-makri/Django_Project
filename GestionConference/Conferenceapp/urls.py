@@ -8,4 +8,7 @@ urlpatterns = [
     # path('liste/', views.all_conferences, name='conference_list'),
     path("liste/", views.ConferenceList.as_view(), name="conference_list"),
     path("details/<int:pk>/", views.ConferenceDetail.as_view(), name="conference_detail"),
+    path("form/", views.ConferenceCreateView.as_view(), name="conference_add"),
+    path("<int:pk>/edit/", views.ConferenceUpdateView.as_view(), name="conference_edit"),
+    path("<int:pk>/delete/", views.ConferenceDeleteView.as_view(), name="conference_delete"),
 ]

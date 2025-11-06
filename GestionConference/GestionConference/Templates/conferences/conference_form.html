@@ -1,0 +1,19 @@
+
+{% if view.object.pk %}
+    <h2>Modifier la conférence : {{ object.name }}</h2>
+{% else %}
+    <h2>Ajouter une conférence</h2>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+    {% if object %}
+        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+        <a href="{% url 'conferenceapp:conference_detail' object.pk %}" class="btn btn-secondary">Annuler</a>
+    {% else %}
+        <button type="submit" class="btn btn-success">Créer</button>
+        <a href="{% url 'conferenceapp:conference_list' %}" class="btn btn-secondary">Annuler</a>
+    {% endif %}
+</form>

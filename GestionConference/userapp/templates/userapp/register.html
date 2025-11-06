@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inscription</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; }
+        .form-container { max-width: 500px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; margin-bottom: 5px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background-color: #007cba; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #005a87; }
+        .helptext { font-size: 12px; color: #666; margin-top: 5px; }
+        .errorlist { color: red; font-size: 12px; list-style: none; padding: 0; }
+        .password-help { background-color: #f0f8ff; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Créer un compte utilisateur</h2>
+        
+        <div class="password-help">
+            <strong>Conseils pour le mot de passe :</strong>
+            <ul>
+                <li>Minimum 4 caractères</li>
+                <li>Évitez d'utiliser votre nom d'utilisateur</li>
+                <li>Utilisez un mélange de lettres et chiffres</li>
+            </ul>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Nom d'utilisateur:</label>
+                {{ form.username }}
+                {% if form.username.help_text %}
+                    <div class="helptext">{{ form.username.help_text }}</div>
+                {% endif %}
+                {{ form.username.errors }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.first_name.id_for_label }}">Prénom:</label>
+                {{ form.first_name }}
+                {{ form.first_name.errors }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.last_name.id_for_label }}">Nom:</label>
+                {{ form.last_name }}
+                {{ form.last_name.errors }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Email:</label>
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.affiliation.id_for_label }}">Affiliation:</label>
+                {{ form.affiliation }}
+                {{ form.affiliation.errors }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.nationality.id_for_label }}">Nationalité:</label>
+                {{ form.nationality }}
+                {{ form.nationality.errors }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.role.id_for_label }}">Rôle:</label>
+                {{ form.role }}
+                {{ form.role.errors }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}">Mot de passe:</label>
+                {{ form.password1 }}
+                {% if form.password1.help_text %}
+                    <div class="helptext">{{ form.password1.help_text }}</div>
+                {% endif %}
+                {{ form.password1.errors }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}">Confirmer le mot de passe:</label>
+                {{ form.password2 }}
+                {% if form.password2.help_text %}
+                    <div class="helptext">{{ form.password2.help_text }}</div>
+                {% endif %}
+                {{ form.password2.errors }}
+            </div>
+            
+            <button type="submit">S'inscrire</button>
+        </form>
+        <p><a href="{% url 'admin:index' %}">Retour à l'administration</a></p>
+    </div>
+</body>
+</html>
