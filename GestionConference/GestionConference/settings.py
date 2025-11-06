@@ -131,3 +131,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = 'userapp.User'
 LOGIN_REDIRECT_URL = 'conferenceapp:conference_list'  # Redirection vers la liste des conférences
 LOGOUT_REDIRECT_URL = 'userapp:login'  # Redirection vers le login après déconnexion
+LOGIN_URL = 'userapp:login'
