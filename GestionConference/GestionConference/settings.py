@@ -132,3 +132,10 @@ AUTH_USER_MODEL = 'userapp.User'
 LOGIN_REDIRECT_URL = 'conferenceapp:conference_list'  # Redirection vers la liste des conférences
 LOGOUT_REDIRECT_URL = 'userapp:login'  # Redirection vers le login après déconnexion
 LOGIN_URL = 'userapp:login'
+
+# Paramètres CSRF pour résoudre les problèmes de token
+CSRF_COOKIE_SECURE = False  # True en production avec HTTPS
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_USE_SESSIONS = False
+CSRF_COOKIE_AGE = 31449600  # 1 an

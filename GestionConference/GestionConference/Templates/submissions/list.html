@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="margin: 20px;">
+    <h2>Mes Soumissions</h2>
+    
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'conferenceapp:submission_add' %}" 
+           style="background-color: #007cba; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;">
+            ➕ Nouvelle Soumission
+        </a>
+        <a href="{% url 'conferenceapp:conference_list' %}" 
+           style="background-color: #28a745; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px; margin-left: 10px;">
+            📋 Voir les Conférences
+        </a>
+    </div>
+
+    {% if submissions %}
+        <table border="1" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead style="background-color: #f8f9fa;">
+                <tr>
+                    <th style="padding: 12px; text-align: left;">Titre</th>
+                    <th style="padding: 12px; text-align: left;">Conférence</th>
+                    <th style="padding: 12px; text-align: left;">Statut</th>
+                    <th style="padding: 12px; text-align: left;">Date de soumission</th>
+                    <th style="padding: 12px; text-align: left;">Paiement</th>
+                    <th style="padding: 12px; text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for submission in submissions %}
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 12px;">
+                        <strong>{{ submission.title }}</strong><br>
+                        <small style="color: #666;">ID: {{ submission.submission_id }}</small>
+                    </td>
+                    <td style="padding: 12px;">
+                        {{ submission.conference_id.name }}<br>
+                        <small style="color: #666;">{{ submission.conference_id.location }}</small>
+                    </td>
+                    <td style="padding: 12px;">
+                        {% if submission.status == 'Submitted' %}
+                            <span style="background-color: #ffc107; color: black; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                📝 {{ submission.status }}
+                            </span>
+                        {% elif submission.status == 'Under Review' %}
+                            <span style="background-color: #17a2b8; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                🔍 {{ submission.status }}
+                            </span>
+                        {% elif submission.status == 'Accepted' %}
+                            <span style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                ✅ {{ submission.status }}
+                            </span>
+                        {% elif submission.status == 'Rejected' %}
+                            <span style="background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                ❌ {{ submission.status }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px;">
+                        {{ submission.submission_date|date:"d/m/Y H:i" }}
+                    </td>
+                    <td style="padding: 12px;">
+                        {% if submission.payed %}
+                            <span style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                💳 Payé
+                            </span>
+                        {% else %}
+                            <span style="background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                ❌ Non payé
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <a href="{% url 'conferenceapp:submission_detail' submission.submission_id %}" 
+                           style="background-color: #007cba; color: white; padding: 6px 10px; text-decoration: none; border-radius: 3px; font-size: 12px; margin: 2px;">
+                            👁️ Détails
+                        </a>
+                        
+                        <!-- Bouton Modifier (seulement si modifiable) -->
+                        {% if submission.status == 'submitted' or submission.status == 'under_review' %}
+                            <a href="{% url 'conferenceapp:submission_edit' submission.submission_id %}" 
+                               style="background-color: #ffc107; color: black; padding: 6px 10px; text-decoration: none; border-radius: 3px; font-size: 12px; margin: 2px;">
+                                ✏️ Modifier
+                            </a>
+                        {% else %}
+                            <span style="color: #6c757d; font-size: 11px; font-style: italic;">
+                                Non modifiable
+                            </span>
+                        {% endif %}
+                        
+                        {% if submission.paper %}
+                            <br>
+                            <a href="{% url 'conferenceapp:download_paper' submission.submission_id %}" 
+                               style="background-color: #28a745; color: white; padding: 6px 10px; text-decoration: none; border-radius: 3px; font-size: 12px; margin: 2px;">
+                                📥 PDF
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if is_paginated %}
+        <div style="margin-top: 20px; text-align: center;">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; première</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">précédente</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">suivante</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">dernière &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+        {% endif %}
+
+    {% else %}
+        <div style="text-align: center; margin-top: 50px; padding: 40px; background-color: #f8f9fa; border-radius: 8px;">
+            <h3 style="color: #666;">Aucune soumission trouvée</h3>
+            <p style="color: #666;">Vous n'avez pas encore fait de soumission.</p>
+            <a href="{% url 'conferenceapp:submission_add' %}" 
+               style="background-color: #007cba; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px; display: inline-block; margin-top: 10px;">
+                ➕ Créer votre première soumission
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

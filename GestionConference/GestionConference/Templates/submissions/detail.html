@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% load submission_extras %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- En-tête avec boutons d'action -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-file-alt text-primary"></i>
+                    Détail de la soumission
+                </h2>
+                <div>
+                <div>
+                    <a href="{% url 'conferenceapp:submission_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour à la liste
+                    </a>
+                    {% if submission.status == 'submitted' or submission.status == 'under_review' %}
+                        <a href="{% url 'conferenceapp:submission_edit' submission.submission_id %}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                    {% endif %}
+                    {% if submission.paper %}
+                    <a href="{% url 'conferenceapp:download_paper' submission.submission_id %}" 
+                       class="btn btn-success">
+                        <i class="fas fa-download"></i> Télécharger PDF
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Informations principales -->
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-info-circle"></i>
+                                Informations de la soumission
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Titre -->
+                            <div class="mb-4">
+                                <h6 class="text-muted mb-2">Titre</h6>
+                                <h4 class="text-primary">{{ submission.title }}</h4>
+                            </div>
+
+                            <!-- ID de soumission -->
+                            <div class="mb-4">
+                                <h6 class="text-muted mb-2">ID de soumission</h6>
+                                <code>{{ submission.submission_id }}</code>
+                            </div>
+
+                            <!-- Résumé -->
+                            <div class="mb-4">
+                                <h6 class="text-muted mb-2">Résumé (Abstract)</h6>
+                                <div class="p-3 bg-light rounded">
+                                    {{ submission.abstract|linebreaks }}
+                                </div>
+                            </div>
+
+                            <!-- Mots-clés -->
+                            <div class="mb-4">
+                                <h6 class="text-muted mb-2">Mots-clés</h6>
+                                <div>
+                                    {% for keyword in submission.keyword|split:"," %}
+                                        <span class="badge bg-secondary me-1">{{ keyword.strip }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Fichier PDF -->
+                            <div class="mb-4">
+                                <h6 class="text-muted mb-2">Fichier PDF</h6>
+                                {% if submission.paper %}
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-file-pdf text-danger fa-2x me-3"></i>
+                                        <div>
+                                            <strong>{{ submission.paper.name|slice:"7:" }}</strong>
+                                            <br>
+                                            <small class="text-muted">
+                                                Taille: {{ submission.paper.size|filesizeformat }}
+                                            </small>
+                                        </div>
+                                        <a href="{% url 'conferenceapp:download_paper' submission.submission_id %}" 
+                                           class="btn btn-sm btn-outline-primary ms-auto">
+                                            <i class="fas fa-download"></i> Télécharger
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted">
+                                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                                        Aucun fichier PDF uploadé
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar avec informations supplémentaires -->
+                <div class="col-lg-4">
+                    <!-- Statut -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">
+                                <i class="fas fa-flag"></i>
+                                Statut
+                            </h6>
+                        </div>
+                        <div class="card-body text-center">
+                            {% if submission.status == 'submitted' %}
+                                <div class="mb-3">
+                                    <i class="fas fa-paper-plane fa-3x text-info"></i>
+                                </div>
+                                <span class="badge bg-info fs-6 px-3 py-2">Soumise</span>
+                            {% elif submission.status == 'under_review' %}
+                                <div class="mb-3">
+                                    <i class="fas fa-search fa-3x text-warning"></i>
+                                </div>
+                                <span class="badge bg-warning fs-6 px-3 py-2">En Révision</span>
+                            {% elif submission.status == 'accepted' %}
+                                <div class="mb-3">
+                                    <i class="fas fa-check-circle fa-3x text-success"></i>
+                                </div>
+                                <span class="badge bg-success fs-6 px-3 py-2">Acceptée</span>
+                            {% elif submission.status == 'rejected' %}
+                                <div class="mb-3">
+                                    <i class="fas fa-times-circle fa-3x text-danger"></i>
+                                </div>
+                                <span class="badge bg-danger fs-6 px-3 py-2">Refusée</span>
+                            {% else %}
+                                <div class="mb-3">
+                                    <i class="fas fa-question-circle fa-3x text-secondary"></i>
+                                </div>
+                                <span class="badge bg-secondary fs-6 px-3 py-2">{{ submission.get_status_display }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Conférence -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">
+                                <i class="fas fa-calendar-alt"></i>
+                                Conférence
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="text-primary">{{ submission.conference_id.name }}</h6>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ submission.conference_id.location }}
+                            </p>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-calendar"></i>
+                                {{ submission.conference_id.start_date|date:"d/m/Y" }} - 
+                                {{ submission.conference_id.end_date|date:"d/m/Y" }}
+                            </p>
+                            <p class="text-muted">
+                                <i class="fas fa-tag"></i>
+                                {{ submission.conference_id.theme }}
+                            </p>
+                            <a href="{% url 'conferenceapp:conference_detail' submission.conference_id.pk %}" 
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i> Voir la conférence
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Paiement -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">
+                                <i class="fas fa-credit-card"></i>
+                                Paiement
+                            </h6>
+                        </div>
+                        <div class="card-body text-center">
+                            {% if submission.paid %}
+                                <div class="mb-3">
+                                    <i class="fas fa-check-circle fa-3x text-success"></i>
+                                </div>
+                                <span class="badge bg-success fs-6 px-3 py-2">Payé</span>
+                                <p class="text-muted mt-2 mb-0">
+                                    <small>Paiement effectué</small>
+                                </p>
+                            {% else %}
+                                <div class="mb-3">
+                                    <i class="fas fa-clock fa-3x text-warning"></i>
+                                </div>
+                                <span class="badge bg-warning fs-6 px-3 py-2">En attente</span>
+                                <p class="text-muted mt-2 mb-0">
+                                    <small>Paiement requis</small>
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Métadonnées -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">
+                                <i class="fas fa-info"></i>
+                                Métadonnées
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <strong>Auteur:</strong>
+                                <br>
+                                {{ submission.user_id.first_name }} {{ submission.user_id.last_name }}
+                                <br>
+                                <small class="text-muted">{{ submission.user_id.email }}</small>
+                            </div>
+                            <hr>
+                            <div class="mb-2">
+                                <strong>Date de soumission:</strong>
+                                <br>
+                                {{ submission.submission_date|date:"d/m/Y à H:i" }}
+                            </div>
+                            <div>
+                                <strong>Dernière modification:</strong>
+                                <br>
+                                {{ submission.submission_date|timesince }} ago
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .badge.fs-6 {
+        font-size: 1rem !important;
+    }
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+</style>
+{% endblock %}

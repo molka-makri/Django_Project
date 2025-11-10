@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-plus-circle text-primary"></i>
+                            Nouvelle Soumission
+                        </h4>
+                        <a href="{% url 'conferenceapp:submission_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Retour
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Conférence -->
+                        <div class="mb-4">
+                            <label for="{{ form.conference_id.id_for_label }}" class="form-label">
+                                <i class="fas fa-calendar-alt text-primary"></i>
+                                {{ form.conference_id.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.conference_id }}
+                            {% if form.conference_id.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.conference_id.errors %}
+                                        <small>{{ error }}</small><br>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">
+                                Choisissez la conférence pour laquelle vous souhaitez soumettre votre article.
+                            </small>
+                        </div>
+
+                        <!-- Titre -->
+                        <div class="mb-4">
+                            <label for="{{ form.title.id_for_label }}" class="form-label">
+                                <i class="fas fa-heading text-primary"></i>
+                                {{ form.title.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.title.errors %}
+                                        <small>{{ error }}</small><br>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">
+                                Donnez un titre clair et descriptif à votre soumission.
+                            </small>
+                        </div>
+
+                        <!-- Résumé -->
+                        <div class="mb-4">
+                            <label for="{{ form.abstract.id_for_label }}" class="form-label">
+                                <i class="fas fa-align-left text-primary"></i>
+                                {{ form.abstract.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.abstract }}
+                            {% if form.abstract.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.abstract.errors %}
+                                        <small>{{ error }}</small><br>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">
+                                Rédigez un résumé de votre article (200-300 mots recommandés).
+                            </small>
+                        </div>
+
+                        <!-- Mots-clés -->
+                        <div class="mb-4">
+                            <label for="{{ form.keyword.id_for_label }}" class="form-label">
+                                <i class="fas fa-tags text-primary"></i>
+                                {{ form.keyword.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.keyword }}
+                            {% if form.keyword.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.keyword.errors %}
+                                        <small>{{ error }}</small><br>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% if form.keyword.help_text %}
+                                <small class="form-text text-muted">{{ form.keyword.help_text }}</small>
+                            {% endif %}
+                            <div class="mt-2">
+                                <small class="text-info">
+                                    <i class="fas fa-lightbulb"></i>
+                                    Exemples: intelligence artificielle, machine learning, deep learning
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Fichier PDF -->
+                        <div class="mb-4">
+                            <label for="{{ form.paper.id_for_label }}" class="form-label">
+                                <i class="fas fa-file-pdf text-danger"></i>
+                                {{ form.paper.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.paper }}
+                            {% if form.paper.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.paper.errors %}
+                                        <small>{{ error }}</small><br>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% if form.paper.help_text %}
+                                <small class="form-text text-muted">{{ form.paper.help_text }}</small>
+                            {% endif %}
+                            <div class="mt-2">
+                                <div class="alert alert-info">
+                                    <h6 class="alert-heading">
+                                        <i class="fas fa-info-circle"></i>
+                                        Exigences du fichier:
+                                    </h6>
+                                    <ul class="mb-0">
+                                        <li>Format: PDF uniquement</li>
+                                        <li>Taille maximale: 10 MB</li>
+                                        <li>Le fichier doit être lisible et de bonne qualité</li>
+                                        <li>Assurez-vous que votre nom n'apparaît pas dans le document (révision anonyme)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Informations importantes -->
+                        <div class="alert alert-warning">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Important:
+                            </h6>
+                            <ul class="mb-0">
+                                <li>Vérifiez bien tous les champs avant de soumettre</li>
+                                <li>Une fois soumise, vous ne pourrez plus modifier votre soumission</li>
+                                <li>Vous recevrez un email de confirmation après soumission</li>
+                                <li>Le statut de votre soumission sera mis à jour ici</li>
+                            </ul>
+                        </div>
+
+                        <!-- Boutons d'action -->
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{% url 'conferenceapp:submission_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Soumettre
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+    }
+    .form-control:focus {
+        border-color: #007cba;
+        box-shadow: 0 0 0 0.2rem rgba(0, 124, 186, 0.25);
+    }
+    .alert {
+        border: none;
+        border-radius: 0.5rem;
+    }
+    .card {
+        border: none;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        border-radius: 0.5rem;
+    }
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        border-radius: 0.5rem 0.5rem 0 0 !important;
+    }
+    .btn {
+        border-radius: 0.375rem;
+    }
+    .gap-2 {
+        gap: 0.5rem !important;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validation côté client pour le fichier PDF
+    const fileInput = document.getElementById('{{ form.paper.id_for_label }}');
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const fileType = file.type;
+                const fileSize = file.size / 1024 / 1024; // en MB
+                
+                if (fileType !== 'application/pdf') {
+                    alert('Veuillez sélectionner un fichier PDF.');
+                    e.target.value = '';
+                    return;
+                }
+                
+                if (fileSize > 10) {
+                    alert('Le fichier est trop volumineux. Taille maximale: 10 MB.');
+                    e.target.value = '';
+                    return;
+                }
+            }
+        });
+    }
+    
+    // Compteur de caractères pour le titre
+    const titleInput = document.getElementById('{{ form.title.id_for_label }}');
+    if (titleInput) {
+        const maxLength = 200;
+        const counter = document.createElement('small');
+        counter.className = 'form-text text-muted';
+        titleInput.parentNode.appendChild(counter);
+        
+        function updateCounter() {
+            const remaining = maxLength - titleInput.value.length;
+            counter.textContent = `${titleInput.value.length}/${maxLength} caractères`;
+            counter.style.color = remaining < 20 ? '#dc3545' : '#6c757d';
+        }
+        
+        titleInput.addEventListener('input', updateCounter);
+        updateCounter();
+    }
+});
+</script>
+{% endblock %}
